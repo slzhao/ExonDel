@@ -1,4 +1,203 @@
-ExonDel
-=======
+Table of Content
+================
+ * [Introduction](#Introduction)
+ * [Download](#download)
+ * [Change log](#Change)
+  * [Release candidate (RC) version 1.1](#RC12)
+  * [Release candidate (RC) version 1.1](#RC11)
+  * [Release candidate (RC) version 1.0](#RC10)
+ * [Prerequisites](#Prerequisites)
+  * [Install required perl packages](#irpp)
+  * [Install required software](#irs)
+  * [Download required database](#drr)
+ * [Usage](#Usage)
+ * [Parameters] (#pa)
+  * [Input file](#if)
+  * [Gene file](#gf)
+  * [Config file](#cf)
+ * [Example](#Example)
+  * [Download example data](#ded)
+  * [Example usage](#eu)
+ * [Results](#Results)
 
-ExonDel is a tool designed specially to efficiently detect exon deletions.
+
+<a name="Introduction"/>
+# Introduction #
+
+Exome sequencing is one of the most cost efficient sequencing approaches for conducting genome research on coding regions. The primary applications of exome sequencing include detection of single nucleotide polymorphisms, somatic mutations, small indels, and copy number variations. There are also some less obvious data mining opportunities through exome sequencing data such as extraction of mitochondria, and virus. Another less explored genomic aberration that can be detected through exome sequencing is internal exon deletions (IEDs).  Exon deletion is the deletion of one or more consecutive exons in a gene.
+
+IEDs have biological importance in cancer and can remove important regulatory mechanisms or protein-protein interactions. Given the large amount of publicly available exome sequencing data accumulated over the last few years, a method that can efficiently detect such deletions would benefit the medical research community greatly and provide a means to rapidly find new internal deletion candidates. Thus, we designed ExonDel, a tool aimed at detecting IEDs through exome sequencing data. 
+
+ExonDel is written with Perl and R and is freely available for public use. It can be downloaded from [ExonDel website on github](https://github.com/slzhao/ExonDel).
+
+<a name="Download"/>
+# Download #
+
+You can directly download ExonDel from [github](https://github.com/slzhao/ExonDel) by the following commands (If git has already been installed in your computer).
+
+	#The source codes of ExonDel software will be downloaded to your current directory
+	git clone https://github.com/slzhao/ExonDel.git
+
+Or you can also download the zip file of ExonDel from [github](https://github.com/slzhao/ExonDel/archive/master.zip).
+
+	#The zip file of ExonDel software will be downloaded to your current directory
+	wget https://github.com/slzhao/ExonDel/archive/master.zip
+	#A directory named ExonDel-master will be generated and the source codes will be extracted there
+	unzip master
+
+<a name="Change"/>
+# Change log #
+
+<a name="RC12">
+## Release candidate (RC) version 1.2 on December 15, 2013
+Release candidate version 1.2 for test
+ * Documents were improved;
+ * Some functions were modified;
+
+<a name="RC11">
+## Release candidate (RC) version 1.1 on November 27, 2013
+Release candidate version 1.1 for test
+ * Documents were improved;
+ * Some bugs were fixed;
+ * Example files were provided;
+
+<a name="RC10">
+## Release candidate (RC) version 1.0 on November 11, 2013
+Release candidate version 1.0 for test
+
+<a name="Prerequisites"/>
+# Prerequisites #
+<a name="irpp"/>
+## Install Perl and required Perl packages ##
+
+Perl is a highly capable, widely used, feature-rich programming language. It could be downloaded [Perl website](http://www.perl.org/get.html).
+
+If Perl has already been installed on your computer, no other Perl module was needed to run ExonDel in most cases. And you can run the following commands to make sure all the required modules have been installed.
+
+	#go the the folder where your ExonDel software is.
+	#And test whether all the required modules have been installed.
+	bash test.modules
+
+The successful output would look like this
+
+    ok   File::Basename
+    ok   File::Copy
+    ok   Getopt::Long
+    ok   threads
+    ok   threads::shared
+
+Otherwise, for example, if File::Basename package was missing, it may look like this
+
+    fail   File::Basename
+    ok   File::Copy
+    ok   Getopt::Long
+    ok   threads
+    ok   threads::shared
+
+Then you need to install the missing packages from [CPAN](http://www.cpan.org/). A program was also provided to make the package installation more convenient.
+	
+	#if File::Basename was missing
+	bash install.modules File::Basename
+
+<a name="irs"/>
+## Install required software ##
+
+### R ###
+
+R is a free software environment for statistical computing and graphics. It could be downloaded from [R website](http://www.r-project.org/).
+
+After you install R and add R bin file to your Path, the software can find and use R automatically. Or you can modify the ExonDel.cfg file in the software directory and tell the program where the R is on your computer. Here is the line you need to modify.
+
+	RBin=R
+
+### samtools ###
+
+SAM Tools provide various utilities for manipulating alignments in the SAM format, including sorting, merging, indexing and generating alignments in a per-position format. It could be downloaded from [SAM Tools website](http://samtools.sourceforge.net/).
+
+After you install SAMtools and add SAMtools bin file to your Path, the software can find and use SAMtools automatically. Or you can modify the ExonDel.cfg file in the software directory and tell the program where the SAMtools is on your computer. Here is the line you need to modify.
+
+	samtoolsBin=samtools
+
+<a name="drr"/>
+## Download required reference files##
+ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference files. The position annotation and GC content for each exon were exported from them. The chromosomes and positions information in these files should be exactly same with the bam files (for example, chromosome 1 can't be represented as chr1 in one file but 1 in another file). The .gtf and .bed files could be downloaded at [UCSC table browser](http://genome.ucsc.edu/cgi-bin/hgTables?command=start). The format of these files were: 
+
+	#bed file:
+	#Column1	    Column2         Column3
+	Chromosome	StartPosition	EndPosition
+
+	#gtf file:
+	#Column1   	...	Column3	Column4	        Column5	...
+	Chromosome	...	exon	StartPosition	EndPosition	...
+
+The .fa files could be downloaded at [UCSC website](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/). As UCSC does not provide the full .fa file, you may needed to download chromFa.tar.gz and combine the files in different chromosome into one .fa file, or download hg19.2bit and convert the 2bit file to .fa file by twoBitToFa.
+
+<a name="Usage"/>
+# Usage #
+The usage of ExonDel software could be:
+
+    perl ExonDel.pl -i bamfileList -o outputDirectory [-g geneList] [-c configFile] [-t threads]
+
+	-i	input bam filelist     Required. Input file. It should be a file listing all analyzed bam files.
+	-o	output directory       Required. Output directory for ExonDel result. If the directory doesn't exist, it would be created.
+	-g	selected gene list     Optional. Genes interested. If specified, Only these genes will be analyzed by ExonDel.
+	-c	config file            Optional. If not specified, ExonDel.cfg in ExonDel directory will be used.
+	-t	threads                Optional. Threads used in analysis. The default value is 4. This parameter only valid for analysis of bam files.
+	-ra re-analysis            Optional. If specified, the analysis will be performed again.
+	-h	help                   Optional. Show help information.
+
+<a name="pa"/>
+# Parameters #
+
+<a name="if"/>
+## Input file ##
+The input file should be a file listing all analyzed bam files. It also supports label for each file listed (The labels are optional). The label should follow the file and separated by a Tab. The labels will be used in the report instead of the file names. So that the report will be much easier to understand. An example was listed here:
+
+	#An example of input file. The labels are optional.
+	#Column1	    Column2
+	sample1Pair1File	labelForThisFile
+	sample1Pair2File	labelForThisFile
+	Sample2Pair1File	labelForThisFile
+
+<a name="gf"/>
+## gene list file 
+ExonDel will perform analysis for all genes by default. But the user can specify some genes in gene list file, so that ExonDel will restrict in these genes, which will be much faster.
+
+<a name="cf"/>
+## config file 
+The config file for ExonDel contains all information such as the path for bed file, gtf file, the cutoff for detecting deletions. The default config file ExonDel.cfg located in the ExonDel directory. And there are several lines which start with "#" and describ the usage of the following line. 
+
+<a name="Example"/>
+# Example #
+
+The example files can be downloaded at [sourceforge](http://sourceforge.net/projects/ExonDel/files/).
+
+You need to download and extract it to a directory. Then the example code for running ExonDel with given example data set could be:
+
+<a name="ded"/>
+## download example data ##
+	#download and extract example data into exampleDir
+	mkdir exampleDir	
+	cd exampleDir
+	wget http://sourceforge.net/projects/exondel/files/example.tar.gz/download
+	tar zxvf example.tar.gz
+	ls
+
+<a name="ue"/>
+## example usage ##
+
+	#assume ExonDel.pl in ExonDelDir, examples in exampleDir
+	cd exampleDir
+	perl ExonDel/ExonDel.pl -i exampleBams.list -c ExonDel.example.cfg -o ./result1
+	#all we can just select some genes to do exon deletions detection
+    perl ExonDel/ExonDel.pl -i exampleBams.list -c ExonDel.example.cfg -g genelist.txt -o ./result2
+
+<a name="Results"/>
+# Results #
+genesPassQCwithGC.bed.depth.all included the GC content and median depth for each exon. ExonDel  detectes exon deletions based on these information.
+
+exonDelsBy1.csv to exonDelsBy9.csv included the deletions found by a moving-window with 1 to 9 exons.
+
+exonDelsCutoffs.csv included the cutoffs for every bam file.
+
+figures directory included some figures as examples for exon deletions found by different moving-windows.
