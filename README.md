@@ -3,7 +3,7 @@ Table of Content
  * [Introduction](#Introduction)
  * [Download](#download)
  * [Change log](#Change)
-  * [Release candidate (RC) version 1.1](#RC12)
+  * [Release candidate (RC) version 1.2](#RC12)
   * [Release candidate (RC) version 1.1](#RC11)
   * [Release candidate (RC) version 1.0](#RC10)
  * [Prerequisites](#Prerequisites)
@@ -108,7 +108,8 @@ R is a free software environment for statistical computing and graphics. It coul
 
 After you install R and add R bin file to your Path, the software can find and use R automatically. Or you can modify the ExonDel.cfg file in the software directory and tell the program where the R is on your computer. Here is the line you need to modify.
 
-	RBin=R
+	#where the R bin file is
+    RBin=R
 
 ### samtools ###
 
@@ -116,7 +117,8 @@ SAM Tools provide various utilities for manipulating alignments in the SAM forma
 
 After you install SAMtools and add SAMtools bin file to your Path, the software can find and use SAMtools automatically. Or you can modify the ExonDel.cfg file in the software directory and tell the program where the SAMtools is on your computer. Here is the line you need to modify.
 
-	samtoolsBin=samtools
+	#where the SAMtools bin file is
+    samtoolsBin=samtools
 
 <a name="drr"/>
 ## Download required reference files##
@@ -125,6 +127,10 @@ ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference file
 	#bed file:
 	#Column1	    Column2         Column3
 	Chromosome	StartPosition	EndPosition
+	
+	#bed file and if you want select some genes:
+	#Column1	    Column2         Column3     Column4
+	Chromosome	StartPosition	EndPosition     Gene
 
 	#gtf file:
 	#Column1   	...	Column3	Column4	        Column5	...
@@ -170,7 +176,7 @@ The config file for ExonDel contains all information such as the path for bed fi
 <a name="Example"/>
 # Example #
 
-The example files can be downloaded at [sourceforge](http://sourceforge.net/projects/ExonDel/files/).
+The example files can be downloaded at [sourceforge](http://sourceforge.net/projects/exondel/files/).
 
 You need to download and extract it to a directory. Then the example code for running ExonDel with given example data set could be:
 
