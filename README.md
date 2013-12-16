@@ -138,8 +138,11 @@ ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference file
 
 The .fa files could be downloaded at [UCSC website](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/). As UCSC does not provide the full .fa file, you may needed to download chromFa.tar.gz and combine the files in different chromosome into one .fa file, or download hg19.2bit and convert the 2bit file to .fa file by twoBitToFa.
 
+**After the .gtf (refseq) file, .bed file and .fa file were downloaded, you also need to fill their address in config file so that ExonDel can find them. See [config file](#cf) for more information.**
+
 <a name="Usage"/>
 # Usage #
+
 The usage of ExonDel software could be:
 
     perl ExonDel.pl -i bamfileList -o outputDirectory [-g geneList] [-c configFile] [-t threads]
@@ -171,7 +174,25 @@ ExonDel will perform analysis for all genes by default. But the user can specify
 
 <a name="cf"/>
 ## config file 
-The config file for ExonDel contains all information such as the path for bed file, gtf file, the cutoff for detecting deletions. The default config file ExonDel.cfg located in the ExonDel directory. And there are several lines which start with "#" and describ the usage of the following line. 
+The config file contains all information for ExonDel, such as the path for bed file, gtf file, the cutoff for detecting deletions. The default config file ExonDel.cfg located in the ExonDel directory. And there are several lines which start with "#" and describ the usage of the following line. 
+
+**The user need to modify the following lines in ExonDel.cfg to ensure ExonDel could find the .gtf, .bed, and .fa files.**
+
+    #reference .bed file
+    bedfile=
+    #reference .gtf file
+    refseq=
+    #reference .fa file
+    reffa=
+
+if these files located in /reference/, then the user need to modify these lines into:
+
+    #reference .bed file
+    bedfile=/reference/example.bed
+    #reference .gtf file
+    refseq=/reference/example.gtf
+    #reference .fa file
+    reffa=/reference/hg19.fa
 
 <a name="Example"/>
 # Example #
