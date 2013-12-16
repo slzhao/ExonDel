@@ -138,7 +138,7 @@ ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference file
 
 The .fa files could be downloaded at [UCSC website](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/). As UCSC does not provide the full .fa file, you may needed to download chromFa.tar.gz and combine the files in different chromosome into one .fa file, or download hg19.2bit and convert the 2bit file to .fa file by twoBitToFa.
 
-**After the .gtf (refseq) file, .bed file and .fa file were downloaded, you also need to fill their address in config file so that ExonDel can find them. See [config file](#cf) for more information.**
+**After the .gtf (refseq) file, .bed file and .fa file were downloaded, you also need to modify the config file so that ExonDel can find them. See [config file](#cf) for more information.**
 
 <a name="Usage"/>
 # Usage #
