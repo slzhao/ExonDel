@@ -185,7 +185,7 @@ The config file contains all information for ExonDel, such as the path for bed f
     #reference .fa file
     reffa=
 
-if these files located in /reference/, then the user need to modify these lines into:
+if these files were example.bed, example.gtf, hg19.fa and located in /reference/, then the user need to modify these lines into:
 
     #reference .bed file
     bedfile=/reference/example.bed
