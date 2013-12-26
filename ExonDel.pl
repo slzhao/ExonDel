@@ -73,7 +73,7 @@ while (<CFG>) {
 	if ($perlCfgSign) {
 		my @lines = ( split /[=]/, $_ );
 		if (! defined $lines[1]) {
-			die("Invalid config file: $configFile\n$_\n$usage");
+			die("Invalid config file: $configFile The following line is not correct:\n$_\n$usage");
 		} else {
 			$config{ $lines[0] } = $lines[1];
 		}

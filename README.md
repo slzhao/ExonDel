@@ -26,7 +26,7 @@ Table of Content
 
 Exome sequencing is one of the most cost efficient sequencing approaches for conducting genome research on coding regions. The primary applications of exome sequencing include detection of single nucleotide polymorphisms, somatic mutations, small indels, and copy number variations. There are also some less obvious data mining opportunities through exome sequencing data such as extraction of mitochondria, and virus. Another less explored genomic aberration that can be detected through exome sequencing is internal exon deletions (IEDs).  Exon deletion is the deletion of one or more consecutive exons in a gene.
 
-IEDs have biological importance in cancer and can remove important regulatory mechanisms or protein-protein interactions. Given the large amount of publicly available exome sequencing data accumulated over the last few years, a method that can efficiently detect such deletions would benefit the medical research community greatly and provide a means to rapidly find new internal deletion candidates. Thus, we designed ExonDel, a tool aimed at detecting IEDs through exome sequencing data. 
+IEDs have biological importance in cancer and may remove important regulatory mechanisms or protein-protein interactions. Given the large amount of publicly available exome sequencing data accumulated over the last few years, a method that can efficiently detect such deletions would benefit the medical research community greatly and provide a means to rapidly find new internal deletion candidates. Thus, we designed ExonDel, a tool aimed at detecting IEDs through exome sequencing data. 
 
 ExonDel is written with Perl and R and is freely available for public use. It can be downloaded from [ExonDel website on github](https://github.com/slzhao/ExonDel).
 
@@ -38,12 +38,12 @@ You can directly download ExonDel from [github](https://github.com/slzhao/ExonDe
 	#The source codes of ExonDel software will be downloaded to your current directory
 	git clone https://github.com/slzhao/ExonDel.git
 
-Or you can also download the zip file of ExonDel from [github](https://github.com/slzhao/ExonDel/archive/master.zip).
+Or you could also download the zip file of ExonDel from [github](https://github.com/slzhao/ExonDel/archive/master.zip).
 
 	#The zip file of ExonDel software will be downloaded to your current directory
-	wget https://github.com/slzhao/ExonDel/archive/master.zip
+	wget https://github.com/slzhao/ExonDel/archive/master.zip -O exonDel.zip
 	#A directory named ExonDel-master will be generated and the source codes will be extracted there
-	unzip master
+    unzip exonDel.zip
 
 <a name="Change"/>
 # Change log #
@@ -72,9 +72,9 @@ Release candidate version 1.0 for test
 
 Perl is a highly capable, widely used, feature-rich programming language. It could be downloaded [Perl website](http://www.perl.org/get.html).
 
-If Perl has already been installed on your computer, no other Perl module was needed to run ExonDel in most cases. And you can run the following commands to make sure all the required modules have been installed.
+If Perl has already been installed on your computer, no other Perl module is needed to run ExonDel in most cases. And you can run the following commands to make sure all the required modules have been installed.
 
-	#go the the folder where your ExonDel software is.
+	#go the the directory where your ExonDel software is.
 	#And test whether all the required modules have been installed.
 	bash test.modules
 
@@ -147,7 +147,7 @@ The usage of ExonDel software could be:
 
     perl ExonDel.pl -i bamfileList -o outputDirectory [-g geneList] [-c configFile] [-t threads]
 
-	-i	input bam filelist     Required. Input file. It should be a file listing all analyzed bam files.
+	-i	input bam filelist     Required. Input file. It should be a file listing all analyzed bam files and their paths.
 	-o	output directory       Required. Output directory for ExonDel result. If the directory doesn't exist, it would be created.
 	-g	selected gene list     Optional. Genes interested. If specified, Only these genes will be analyzed by ExonDel.
 	-c	config file            Optional. If not specified, ExonDel.cfg in ExonDel directory will be used.
@@ -160,13 +160,12 @@ The usage of ExonDel software could be:
 
 <a name="if"/>
 ## Input file ##
-The input file should be a file listing all analyzed bam files. It also supports label for each file listed (The labels are optional). The label should follow the file and separated by a Tab. The labels will be used in the report instead of the file names. So that the report will be much easier to understand. An example was listed here:
+The input file should be a file listing all analyzed bam files. It also supports label for each file listed (The labels are optional). The label should follow the file and separated by a Tab. The labels will be used in the report instead of the file names, so the report will be much easier to understand. An example was listed here:
 
 	#An example of input file. The labels are optional.
-	#Column1	    Column2
-	sample1Pair1File	labelForThisFile
-	sample1Pair2File	labelForThisFile
-	Sample2Pair1File	labelForThisFile
+	#Column1 (bam files)    Column2(labels)
+	sample1File.bam    labelForSample1
+	Sample2File.bam    labelForSample2
 
 <a name="gf"/>
 ## gene list file 
@@ -174,7 +173,7 @@ ExonDel will perform analysis for all genes by default. But the user can specify
 
 <a name="cf"/>
 ## config file 
-The config file contains all information for ExonDel, such as the path for bed file, gtf file, the cutoff for detecting deletions. The default config file ExonDel.cfg located in the ExonDel directory. And there are several lines which start with "#" and describ the usage of the following line. 
+The config file contains all parameters for ExonDel to execute, such as the path to bed file, gtf file, the cutoff for detecting deletions. The default config file ExonDel.cfg located in the ExonDel directory. And there are several comment lines which start with "#" and describe the usage of the following line. 
 
 **The user need to modify the following lines in ExonDel.cfg to ensure ExonDel could find the .gtf, .bed, and .fa files.**
 
@@ -197,7 +196,7 @@ if these files were example.bed, example.gtf, hg19.fa and located in /reference/
 <a name="Example"/>
 # Example #
 
-The example files can be downloaded at [sourceforge](http://sourceforge.net/projects/exondel/files/).
+The example files can be downloaded from [ExonDel website on sourceforge](http://sourceforge.net/projects/exondel/files/).
 
 You need to download and extract it to a directory. Then the example code for running ExonDel with given example data set could be:
 
@@ -213,11 +212,75 @@ You need to download and extract it to a directory. Then the example code for ru
 <a name="ue"/>
 ## example usage ##
 
-	#assume ExonDel.pl in ExonDelDir, examples in exampleDir
+We can use all genes to do exon deletions detection.
+
+	#assume ExonDel.pl in the directory ExonDel-master/, examples in exampleDir
 	cd exampleDir
-	perl ExonDel/ExonDel.pl -i exampleBams.list -c ExonDel.example.cfg -o ./result1
-	#all we can just select some genes to do exon deletions detection
-    perl ExonDel/ExonDel.pl -i exampleBams.list -c ExonDel.example.cfg -g genelist.txt -o ./result2
+	perl path_to/ExonDel-master/ExonDel.pl -i exampleBams.list -c ExonDel.example.cfg -o ./result1
+	
+You should standard out message as below:
+
+	#[Fri Dec 20 10:28:00 2013] All genes will be used
+	#[Fri Dec 20 10:28:00 2013] Loading BED file
+	#[Fri Dec 20 10:28:00 2013] Finish BED file (cover 18683 base pairs)
+	#[Fri Dec 20 10:28:00 2013] Loading RefSeq file
+	#[Fri Dec 20 10:28:00 2013] Finish RefSeq file
+	#[Fri Dec 20 10:28:00 2013] Loading fasta file and caculating GC content
+	#[Fri Dec 20 10:28:02 2013] Caculating GC content in 5: 43 exons
+	#[Fri Dec 20 10:28:04 2013] Caculating GC content in 6: 24 exons
+	#[Fri Dec 20 10:28:05 2013] Caculating GC content in 13: 35 exons
+	#[Fri Dec 20 10:28:05 2013] Finish fasta file
+	#[Fri Dec 20 10:28:05 2013] Loading genesPassQCwithGC.bed
+	#[Fri Dec 20 10:28:05 2013] Processing bam files
+	#[Fri Dec 20 10:28:06 2013] Thread 1 stared
+	#[Fri Dec 20 10:28:06 2013] Thread 1 processing example1.bam     example1
+	#[Fri Dec 20 10:28:06 2013] Thread 1 processing example2.bam     example2
+	#[Fri Dec 20 10:28:06 2013] Thread 1 processing example3.bam     example3
+	#[Fri Dec 20 10:28:06 2013] Thread 2 stared
+	#[Fri Dec 20 10:28:06 2013] Thread 2 processing example4.bam     example4
+	#[Fri Dec 20 10:28:06 2013] Thread 3 stared
+	#[Fri Dec 20 10:28:06 2013] Thread 4 stared
+	#[Fri Dec 20 10:28:06 2013] Thread 1 finished
+	#[Fri Dec 20 10:28:07 2013] Thread 2 finished
+	#[Fri Dec 20 10:28:07 2013] Thread 3 finished
+	#[Fri Dec 20 10:28:07 2013] Thread 4 finished
+	#[Fri Dec 20 10:28:07 2013] Finish bam file
+	#[Fri Dec 20 10:28:07 2013] Analyzing Exon Deletion
+	#[Fri Dec 20 10:28:07 2013] Success!
+
+Also we can just select some genes to do exon deletions detection.
+
+    perl path_to/ExonDel-master/ExonDel.pl -i exampleBams.list -c ExonDel.example.cfg -g genelist.txt -o ./result2
+    
+You will see the standard out message as below:
+
+	#[Fri Dec 20 10:34:34 2013] Only the genes in genelist.txt will be used
+	#[Fri Dec 20 10:34:34 2013] GC adjustment will not be performed, and the constant cutoffs in config file will be used
+	#[Fri Dec 20 10:34:34 2013] Loading BED file
+	#[Fri Dec 20 10:34:34 2013] Finish BED file (cover 6655 base pairs)
+	#[Fri Dec 20 10:34:34 2013] Loading RefSeq file
+	#[Fri Dec 20 10:34:34 2013] Finish RefSeq file
+	#[Fri Dec 20 10:34:34 2013] Loading fasta file and caculating GC content
+	#[Fri Dec 20 10:34:38 2013] Caculating GC content in 6: 24 exons
+	#[Fri Dec 20 10:34:39 2013] Caculating GC content in 13: 35 exons
+	#[Fri Dec 20 10:34:39 2013] Finish fasta file
+	#[Fri Dec 20 10:34:39 2013] Loading genesPassQCwithGC.bed
+	#[Fri Dec 20 10:34:39 2013] Processing bam files
+	#[Fri Dec 20 10:34:40 2013] Thread 1 stared
+	#[Fri Dec 20 10:34:40 2013] Thread 1 processing example1.bam     example1
+	#[Fri Dec 20 10:34:40 2013] Thread 1 processing example2.bam     example2
+	#[Fri Dec 20 10:34:40 2013] Thread 1 processing example3.bam     example3
+	#[Fri Dec 20 10:34:40 2013] Thread 2 stared
+	#[Fri Dec 20 10:34:40 2013] Thread 2 processing example4.bam     example4
+	#[Fri Dec 20 10:34:40 2013] Thread 3 stared
+	#[Fri Dec 20 10:34:40 2013] Thread 4 stared
+	#[Fri Dec 20 10:34:40 2013] Thread 1 finished
+	#[Fri Dec 20 10:34:40 2013] Thread 2 finished
+	#[Fri Dec 20 10:34:40 2013] Thread 3 finished
+	#[Fri Dec 20 10:34:40 2013] Thread 4 finished
+	#[Fri Dec 20 10:34:40 2013] Finish bam file
+	#[Fri Dec 20 10:34:40 2013] Analyzing Exon Deletion
+	#[Fri Dec 20 10:34:41 2013] Success!
 
 <a name="Results"/>
 # Results #
