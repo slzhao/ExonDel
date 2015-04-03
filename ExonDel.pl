@@ -7,7 +7,12 @@ use File::Basename;
 use Getopt::Long;
 use File::Copy qw(copy);
 
-my $version = "RC1.2";
+use FindBin;
+use lib $FindBin::Bin;
+use HTML::Template;
+use Report::Generate;
+
+my $version = "1.0.1";
 
 my %config;
 my $current : shared;
@@ -37,8 +42,12 @@ For more information, please refer to the readme file in ExonDel directory. Or v
 my $commandline = "perl $0 "
   . join( " ", @ARGV )
   ;    #Output you input command in the report to reproduce you result
-my ( $maxThreads, $filelist, $resultDir, $configFile, $reAnalysis,$genelist, $showHelp );
+my (
+	$maxThreads, $filelist, $resultDir, $configFile,
+	$reAnalysis, $genelist, $showHelp
+);
 my %genes;
+
 #our @log : shared;
 my @log;
 
@@ -58,23 +67,28 @@ if ( !defined $configFile ) {
 	$configFile = dirname($0) . "/ExonDel.cfg";
 }
 open CFG, "<$configFile" or die "Can't read $configFile\n$!";
-my $perlCfgSign=0;
+my $perlCfgSign = 0;
 while (<CFG>) {
 	s/\r|\n//g;
 	if (/^#/) {
 		next;
-	} elsif (/^\[perl\]/) {
-		$perlCfgSign=1;
+	}
+	elsif (/^\[perl\]/) {
+		$perlCfgSign = 1;
 		next;
-	} elsif (/^\[R\]/) {
-		$perlCfgSign=0;
+	}
+	elsif (/^\[R\]/) {
+		$perlCfgSign = 0;
 		next;
 	}
 	if ($perlCfgSign) {
 		my @lines = ( split /[=]/, $_ );
-		if (! defined $lines[1]) {
-			die("Invalid config file: $configFile The following line is not correct:\n$_\n$usage");
-		} else {
+		if ( !defined $lines[1] ) {
+			die(
+"Invalid config file: $configFile The following line is not correct:\n$_\n$usage"
+			);
+		}
+		else {
 			$config{ $lines[0] } = $lines[1];
 		}
 	}
@@ -109,17 +123,19 @@ if ( !( -e $resultDir ) ) {
 	else {
 		die "Can't make result dir. $!\n";
 	}
-} else {
-	if ($config{'reAnalysis'}) {
-		unlink("$resultDir/genesPassQCwithGC.bed.depth.all")
+}
+else {
+	if ( $config{'reAnalysis'} ) {
+		unlink("$resultDir/genesPassQCwithGC.bed.depth.all");
 	}
 }
 
 if ( defined $resultDir ) {
 	open LOG, ">$resultDir/" . $config{'logFileName'}
 	  or die "can't open log file. $!\n";
+
 	#copy cfg file to result dir
-	if (! -s ("$resultDir/ExonDel.cfg") or $reAnalysis) {
+	if ( !-s ("$resultDir/ExonDel.cfg") or $reAnalysis ) {
 		copy $configFile, "$resultDir/ExonDel.cfg";
 	}
 }
@@ -129,16 +145,21 @@ $| = 1;
 #############################
 # 0. load genes interested
 #############################
-if (defined $genelist and  ( -s $genelist )) {
+if ( defined $genelist and ( -s $genelist ) ) {
 	open GENELIST, "<$genelist" or die "Can't open $genelist\n";
 	while (<GENELIST>) {
 		chomp;
-		$genes{$_}="";
-#		pInfo( "$_", \@log );
+		$genes{$_} = "";
+
+		#		pInfo( "$_", \@log );
 	}
 	pInfo( "Only the genes in $genelist will be used", \@log );
-	pInfo( "GC adjustment will not be performed, and the constant cutoffs in config file will be used", \@log );
-} else {
+	pInfo(
+"GC adjustment will not be performed, and the constant cutoffs in config file will be used",
+		\@log
+	);
+}
+else {
 	pInfo( "All genes will be used", \@log );
 }
 
@@ -146,9 +167,15 @@ if (defined $genelist and  ( -s $genelist )) {
 # 1. load capture kit ped and put into hash
 #############################
 my %bedDatabase;
-if ( -s ("$resultDir/genesPassQCwithGC.bed") and -s ("$resultDir/genesPassQC.bed") and -s ("$resultDir/covered_percentage") and !$reAnalysis ) {
-	pInfo( "$resultDir/genesPassQCwithGC.bed exists, skip load BED file", \@log );
-} else {
+if (    -s ("$resultDir/genesPassQCwithGC.bed")
+	and -s ("$resultDir/genesPassQC.bed")
+	and -s ("$resultDir/covered_percentage")
+	and !$reAnalysis )
+{
+	pInfo( "$resultDir/genesPassQCwithGC.bed exists, skip load BED file",
+		\@log );
+}
+else {
 	pInfo( "Loading BED file", \@log );
 	my $bedSize = &loadbed( $config{'bedfile'}, \%bedDatabase, 1 );
 	pInfo( "Finish BED file (cover $bedSize base pairs)", \@log );
@@ -158,9 +185,15 @@ if ( -s ("$resultDir/genesPassQCwithGC.bed") and -s ("$resultDir/genesPassQC.bed
 # 2. load RefSeq Gene file
 ########################
 my %resultHash;
-if ( -s ("$resultDir/genesPassQCwithGC.bed") and -s ("$resultDir/genesPassQC.bed") and -s ("$resultDir/covered_percentage") and !$reAnalysis ) {
-	pInfo( "$resultDir/genesPassQCwithGC.bed exists, skip load RefSeq Gene", \@log );
-} else {
+if (    -s ("$resultDir/genesPassQCwithGC.bed")
+	and -s ("$resultDir/genesPassQC.bed")
+	and -s ("$resultDir/covered_percentage")
+	and !$reAnalysis )
+{
+	pInfo( "$resultDir/genesPassQCwithGC.bed exists, skip load RefSeq Gene",
+		\@log );
+}
+else {
 	pInfo( "Loading RefSeq file", \@log );
 	&generateNewRefseq( \%config, \%bedDatabase, \%resultHash );
 	pInfo( "Finish RefSeq file", \@log );
@@ -185,8 +218,12 @@ else {
 # 4. load bam files to caculate median depth for each exon
 ########################
 if ( -s ("$resultDir/genesPassQCwithGC.bed.depth") and !$reAnalysis ) {
-	pInfo( "$resultDir/genesPassQCwithGC.bed.depth exists, skip caculating depth for each exon", \@log );
-} else {
+	pInfo(
+"$resultDir/genesPassQCwithGC.bed.depth exists, skip caculating depth for each exon",
+		\@log
+	);
+}
+else {
 	##load genesPassQCwithGC.bed file to get content for exon depth
 	pInfo( "Loading genesPassQCwithGC.bed", \@log );
 	my @newBed;
@@ -218,17 +255,56 @@ if ( -s ("$resultDir/genesPassQCwithGC.bed.depth") and !$reAnalysis ) {
 pInfo( "Analyzing Exon Deletion", \@log );
 my $RBin    = $config{"RBin"};
 my $Rsource = dirname($0) . "/rFunctions.R";
-if (defined $genelist) {
-	$genelist="T";
-} else {
-	$genelist="F";
+if ( defined $genelist ) {
+	$genelist = "T";
+}
+else {
+	$genelist = "F";
 }
 my $rResult = system(
 "cat $Rsource | $RBin --vanilla --slave --args $resultDir $configFile $genelist 1>$resultDir/ExonDel.rLog 2>$resultDir/ExonDel.rLog"
 );
 if ( $rResult != 0 ) {
-		pInfo("Something wrong in running R. Please check the ExonDel.rLog file!",\@log);
+	pInfo( "Something wrong in running R. Please check the ExonDel.rLog file!",
+		\@log );
 }
+
+########################
+# 6. Gererate report
+########################
+
+#report
+my $reportHash;
+${$reportHash}{'COMMAND'}   = $commandline;
+${$reportHash}{'CREATTIME'} = localtime;
+
+my $table1 = &file2table( "$resultDir/exonDelsCutoffs.csv", '', 1 );
+${$reportHash}{'MAKETABLE1'} = $table1;
+
+my @filesContent;
+opendir( DIR, "$resultDir" ) or die $!;
+my $count = 0;
+while ( my $file = readdir(DIR) ) {
+	if ( $file =~ /exonDelsBy\d+.csv$/ ) {
+		my $table1 =
+		  &file2table( "$resultDir/$file", [ 0, 1, 2, 5, 7, 8, 9 ], 1, 4 );
+		${$reportHash}{'MAKETABLE2'} = $table1;
+
+		my @temp = @{$table1};
+		shift @temp;
+		$filesContent[$count]{'MAKETABLE2'} = \@temp;
+		$filesContent[$count]{'FILENAME'}   = $file;
+
+		$count++;
+	}
+}
+${$reportHash}{'FILECONTENTLOOP'} = \@filesContent;
+
+my $template =
+  &build_template( dirname($0) . "/report_tmpl.tmpl", $reportHash );
+
+open REPORT, ">$resultDir/ExonDelReport.html" or die "can't open $!\n";
+print REPORT $template->output;
 
 ########################
 # Ends
@@ -259,6 +335,7 @@ sub processFasta {
 
 			#do some thing here
 			if ( $chr ne "" ) {
+				$chr =~ s/chr//;
 				&caculateGC( $chr, $sequence, $resultHashRef );
 			}
 
@@ -273,6 +350,7 @@ sub processFasta {
 	}
 
 	#do some thing again for last sequence here
+	$chr =~ s/chr//;
 	&caculateGC( $chr, $sequence, $resultHashRef );
 
 	#end do something
@@ -324,15 +402,15 @@ sub generateNewRefseq {
 		if ( !exists $bedDatabaseRef->{$chr} ) {
 			next;
 		}
-		my $gene         = $tokens[12];
-		if ( %genes and !(exists $genes{$gene}) ) {
+		my $gene = $tokens[12];
+		if ( %genes and !( exists $genes{$gene} ) ) {
 			next;
 		}
-		my $TID          = $tokens[1];
-		my $exonCount    = $tokens[8];
-		my $exonStart    = $tokens[9];
-		my $exonEnd      = $tokens[10];
-		
+		my $TID       = $tokens[1];
+		my $exonCount = $tokens[8];
+		my $exonStart = $tokens[9];
+		my $exonEnd   = $tokens[10];
+
 		my $inbed        = 0;
 		my @start        = split( ",", $exonStart );
 		my @end          = split( ",", $exonEnd );
@@ -386,16 +464,16 @@ sub loadbed {
 	}
 	while (<IIN>) {
 		s/\r|\n//g;
-		my @line= split "\t";
-		if (%genes and defined $line[3] ) {
-			my $selectThisGene=0;
-			foreach my $gene (split( "\\|", $line[3] )) {
-				if (exists $genes{$gene}) {
-					$selectThisGene=1;
+		my @line = split "\t";
+		if ( %genes and defined $line[3] ) {
+			my $selectThisGene = 0;
+			foreach my $gene ( split( "\\|", $line[3] ) ) {
+				if ( exists $genes{$gene} ) {
+					$selectThisGene = 1;
 					last;
 				}
 			}
-			if ($selectThisGene==0) {next;}
+			if ( $selectThisGene == 0 ) { next; }
 		}
 		my ( $chr, $start, $end ) = @line;
 		$chr =~ s/chr//;
@@ -421,8 +499,8 @@ sub processFileList {
 	open( FILELIST, $filelistFile ) or die $!;
 	while ( my $f = <FILELIST> ) {
 		$f =~ s/\r|\n//g;
-		my $fileName=(split( "\t", $f ))[0];
-		if ( !( -e $fileName ) ) { 
+		my $fileName = ( split( "\t", $f ) )[0];
+		if ( !( -e $fileName ) ) {
 			pInfo( "$fileName doesn't exist", \@log );
 			next;
 		}
@@ -472,10 +550,10 @@ sub getDepthBam {
 	my $mapQ        = $config->{'mapQ'};
 	my $samtoolsBin = $config->{'samtoolsBin'};
 	my $resultDir   = $config->{'resultDir'};
-	
+
 	my @fileLable = ( split /\t/, $file );
-	my $fileName = $fileLable[0];
-	my $label = $fileName;
+	my $fileName  = $fileLable[0];
+	my $label     = $fileName;
 	if ( defined $fileLable[1] ) {
 		$label = $fileLable[1];
 	}
@@ -489,6 +567,7 @@ sub getDepthBam {
 	while (<DEPTH>) {
 		chomp;
 		my ( $chr, $pos, $dp ) = split( "\t", $_ );
+		$chr =~ s/chr//;
 		my $id = $chr . "_" . $pos;
 		$bamPosDepth{$id} = $dp;
 	}
@@ -512,7 +591,7 @@ sub getDepthBam {
 sub median {
 	my @data = sort { $a <=> $b; } @_;
 	my $length_data = @data;
-	if ($length_data==0) {
+	if ( $length_data == 0 ) {
 		return (0);
 	}
 	my $mid_value;

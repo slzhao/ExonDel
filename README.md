@@ -3,6 +3,7 @@ Table of Content
  * [Introduction](#Introduction)
  * [Download](#download)
  * [Change log](#Change)
+  * [Version 1.01](#V101)
   * [Release candidate (RC) version 1.2](#RC12)
   * [Release candidate (RC) version 1.1](#RC11)
   * [Release candidate (RC) version 1.0](#RC10)
@@ -48,6 +49,12 @@ Or you could also download the zip file of ExonDel from [github](https://github.
 <a name="Change"/>
 # Change log #
 
+<a name="V101">
+## Version 1.01 on April 3, 2015
+Version 1.01
+ * Modifications in README file;
+ * Support chromosome 1 as "chr1" and "1" in bam files;
+
 <a name="RC12">
 ## Release candidate (RC) version 1.2 on December 15, 2013
 Release candidate version 1.2 for test
@@ -80,19 +87,25 @@ If Perl has already been installed on your computer, no other Perl module is nee
 
 The successful output would look like this
 
-    ok   File::Basename
-    ok   File::Copy
-    ok   Getopt::Long
-    ok   threads
-    ok   threads::shared
+	ok   File::Basename
+	ok   File::Copy
+	ok   FindBin
+	ok   Getopt::Long
+	ok   HTML::Template
+	ok   Report::Generate
+	ok   threads
+	ok   threads::shared
 
 Otherwise, for example, if File::Basename package was missing, it may look like this
 
     fail   File::Basename
-    ok   File::Copy
-    ok   Getopt::Long
-    ok   threads
-    ok   threads::shared
+	ok   File::Copy
+	ok   FindBin
+	ok   Getopt::Long
+	ok   HTML::Template
+	ok   Report::Generate
+	ok   threads
+	ok   threads::shared
 
 Then you need to install the missing packages from [CPAN](http://www.cpan.org/). A program was also provided to make the package installation more convenient.
 	
@@ -122,7 +135,7 @@ After you install SAMtools and add SAMtools bin file to your Path, the software 
 
 <a name="drr"/>
 ## Download required reference files##
-ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference files. The position annotation and GC content for each exon were exported from them. The chromosomes and positions information in these files should be exactly same with the bam files (for example, chromosome 1 can't be represented as chr1 in one file but 1 in another file). The .gtf and .bed files could be downloaded at [UCSC table browser](http://genome.ucsc.edu/cgi-bin/hgTables?command=start). The format of these files were: 
+ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference files. The position annotation and GC content for each exon were exported from them. The chromosomes and positions information in these files should be exactly same with the bam files (for example, chromosome 1 can't be represented as chr1 in one file but 1 in another file). The .gtf and .bed files could be downloaded at [UCSC table browser](http://genome.ucsc.edu/cgi-bin/hgTables?command=start). To download a gtf file with correct format, please select track as RefSeq Genes in UCSC table browser. The format of these files were: 
 
 	#bed file:
 	#Column1	    Column2         Column3
@@ -133,8 +146,7 @@ ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference file
 	Chromosome	StartPosition	EndPosition     Gene
 
 	#gtf file:
-	#Column1   	...	Column3	Column4	        Column5	...
-	Chromosome	...	exon	StartPosition	EndPosition	...
+	#bin name chrom strand txStart txEnd cdsStart cdsEnd exonCount exonStarts exonEnds score name2 cdsStartStat cdsEndStat exonFrames
 
 The .fa files could be downloaded at [UCSC website](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/). As UCSC does not provide the full .fa file, you may needed to download chromFa.tar.gz and combine the files in different chromosome into one .fa file, or download hg19.2bit and convert the 2bit file to .fa file by twoBitToFa.
 
