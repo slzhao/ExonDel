@@ -3,7 +3,9 @@ Table of Content
  * [Introduction](#Introduction)
  * [Download](#download)
  * [Change log](#Change)
+  * [Version 1.02](#V102)
   * [Version 1.01](#V101)
+  * [Version 1.00](#V100)
   * [Release candidate (RC) version 1.2](#RC12)
   * [Release candidate (RC) version 1.1](#RC11)
   * [Release candidate (RC) version 1.0](#RC10)
@@ -49,11 +51,21 @@ Or you could also download the zip file of ExonDel from [github](https://github.
 <a name="Change"/>
 # Change log #
 
+<a name="V102">
+## Version 1.02 on April 15, 2015
+Version 1.02
+ * Bug Fixed in html report generation;
+
 <a name="V101">
 ## Version 1.01 on April 3, 2015
 Version 1.01
  * Modifications in README file;
  * Support chromosome 1 as "chr1" and "1" in bam files;
+
+<a name="V100">
+## Version 1.00 on April 3, 2014
+Version 1.00
+ * Html report generation;
 
 <a name="RC12">
 ## Release candidate (RC) version 1.2 on December 15, 2013

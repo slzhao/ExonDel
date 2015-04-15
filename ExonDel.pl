@@ -12,7 +12,7 @@ use lib $FindBin::Bin;
 use HTML::Template;
 use Report::Generate;
 
-my $version = "1.0.1";
+my $version = "1.0.2";
 
 my %config;
 my $current : shared;
