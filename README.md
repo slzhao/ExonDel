@@ -3,6 +3,7 @@ Table of Content
  * [Introduction](#Introduction)
  * [Download](#download)
  * [Change log](#Change)
+  * [Version 1.03](#V103)
   * [Version 1.02](#V102)
   * [Version 1.01](#V101)
   * [Version 1.00](#V100)
@@ -50,6 +51,11 @@ Or you could also download the zip file of ExonDel from [github](https://github.
 
 <a name="Change"/>
 # Change log #
+
+<a name="V103">
+## Version 1.03 on April 28, 2015
+Version 1.03
+ * Bug Fixed in html report generation;
 
 <a name="V102">
 ## Version 1.02 on April 15, 2015
