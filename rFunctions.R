@@ -145,7 +145,7 @@ for (winLength in minWinLength:maxWinLength) {
 	resultsExport<-NULL
 	resultsCount<-which(results>0,arr.ind=T)
 	if (nrow(resultsCount)>0) {
-		png(paste(figureDir,"/exonDelsBy",winLength,".png",sep=""),width=1000,height=300)
+		png(paste(figureDir,"/exonDelsBy",winLength,".csv.png",sep=""),width=1000,height=300,res=150)
 		par(mfrow=c(1,4))
 		par(mar=c(2,2,2,1))
 		for (x in 1:nrow(resultsCount)) {
@@ -178,7 +178,8 @@ for (winLength in minWinLength:maxWinLength) {
 		fileExport1<-paste(resultDir,'/exonDelsBy',winLength,'.csv',sep="")
 		fileExport2<-paste(resultDir,'/exonDelsCutoffs.csv',sep="")
 		write.csv(resultsExport,fileExport1,row.names=F)
-		write.csv(resultsCutoffs,fileExport2)
+		resultsCutoffs<-cbind(cutoff=row.names(resultsCutoffs),resultsCutoffs)
+		write.csv(resultsCutoffs,fileExport2,row.names=F)
 	} else {
 		cat("Can't find any exon deletions with",winLength, "windows length\n")
 	}
