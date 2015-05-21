@@ -72,11 +72,14 @@ fileNameAll<-paste(resultDir,'/genesPassQCwithGC.bed.depth.all',sep="")
 
 #load data
 if (file.exists(fileNameAll)) {
+	print(paste0("Loading ",fileNameAll," to R"))
 	exonAll<-read.bigFile(fileNameAll,header=T,knownColC=c(1,4,5),knownColN=c(6:500))
 } else {
 	fileNameExon<-paste(resultDir,'/genesPassQCwithGC.bed',sep="")
 	fileNameDepth<-paste(fileNameExon,'.depth',sep="")
+	print(paste0("Loading ",fileNameExon," to R"))
 	exonAll<-read.bigFile(fileNameExon,header=F,knownColC=c(1,4,5))
+	print(paste0("Loading ",fileNameDepth," to R"))
 	exonDepth<-read.bigFile(fileNameDepth,header=F,row.names=1,knownColN=c(2:(nrow(exonAll)+1)))
 	colnames(exonAll)<-c("chr","start","end","gene","transcript","GC")
 	exonAll<-cbind(exonAll,t(exonDepth))
@@ -92,10 +95,12 @@ if (selectGeneFlag) {
 	adjustGC<-F
 	minQuantile1<-as.numeric(cfg["cutoff1",1])
 	minQuantile2<-as.numeric(cfg["cutoff2",1])
+	print(paste0("Reads ",minQuantile1," and ",minQuantile2," will be used as cutoff in exon deletion detection"))
 } else {
 	minQuantile1<-as.numeric(cfg["cutoffQuantile1",1])
 	minQuantile2<-as.numeric(cfg["cutoffQuantile2",1])
 	adjustGC<-cfg["adjustGC",1]
+	print(paste0("Quantile ",minQuantile1," and ",minQuantile2," of all reads for each sample will be used as cutoff in exon deletion detection"))
 }
 
 figureDir<-paste(resultDir,"/figures/",sep="")
@@ -181,7 +186,7 @@ for (winLength in minWinLength:maxWinLength) {
 		resultsCutoffs<-cbind(cutoff=row.names(resultsCutoffs),resultsCutoffs)
 		write.csv(resultsCutoffs,fileExport2,row.names=F)
 	} else {
-		cat("Can't find any exon deletions with",winLength, "windows length\n")
+		print(paste0("Can't find any exon deletions with",winLength, "windows length\n"))
 	}
 }
 

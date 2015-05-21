@@ -3,6 +3,7 @@ Table of Content
  * [Introduction](#Introduction)
  * [Download](#download)
  * [Change log](#Change)
+  * [Version 1.04](#V104)
   * [Version 1.03](#V103)
   * [Version 1.02](#V102)
   * [Version 1.01](#V101)
@@ -51,6 +52,11 @@ Or you could also download the zip file of ExonDel from [github](https://github.
 
 <a name="Change"/>
 # Change log #
+
+<a name="V104">
+## Version 1.04 on May 20, 2015
+Version 1.04
+ * Changes in R code to add more information in log file;
 
 <a name="V103">
 ## Version 1.03 on April 28, 2015
@@ -239,7 +245,7 @@ You need to download and extract it to a directory. Then the example code for ru
 	tar zxvf example.tar.gz
 	ls
 
-<a name="ue"/>
+<a name="eu"/>
 ## example usage ##
 
 We can use all genes to do exon deletions detection.
