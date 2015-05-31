@@ -3,6 +3,7 @@ Table of Content
  * [Introduction](#Introduction)
  * [Download](#download)
  * [Change log](#Change)
+  * [Version 1.05](#V105)
   * [Version 1.04](#V104)
   * [Version 1.03](#V103)
   * [Version 1.02](#V102)
@@ -52,6 +53,11 @@ Or you could also download the zip file of ExonDel from [github](https://github.
 
 <a name="Change"/>
 # Change log #
+
+<a name="V105">
+## Version 1.05 on May 30, 2015
+Version 1.05
+ * ExonDel will display warning message if gtf file with incorrect format is used;
 
 <a name="V104">
 ## Version 1.04 on May 20, 2015
@@ -169,7 +175,7 @@ ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference file
 	#Column1	    Column2         Column3     Column4
 	Chromosome	StartPosition	EndPosition     Gene
 
-	#gtf file:
+	#gtf file (with header):
 	#bin name chrom strand txStart txEnd cdsStart cdsEnd exonCount exonStarts exonEnds score name2 cdsStartStat cdsEndStat exonFrames
 
 The .fa files could be downloaded at [UCSC website](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/). As UCSC does not provide the full .fa file, you may needed to download chromFa.tar.gz and combine the files in different chromosome into one .fa file, or download hg19.2bit and convert the 2bit file to .fa file by twoBitToFa.

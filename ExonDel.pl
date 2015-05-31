@@ -12,7 +12,7 @@ use lib $FindBin::Bin;
 use HTML::Template;
 use Report::Generate;
 
-my $version = "1.04";
+my $version = "1.05";
 
 my %config;
 my $current : shared;
@@ -391,6 +391,10 @@ sub generateNewRefseq {
 	open( NEWBED, ">$resultDir/genesPassQC.bed" )    or die $!;
 	my $header = <REFSEQ>;
 	chomp $header;
+	if ($header!~/^#bin	name	chrom	strand	txStart	txEnd	cdsStart	cdsEnd	exonCount	exonStarts	exonEnds/) {
+		pInfo( "###WARNING###The format in GTF file may not be supported. Please check the descriptions for GTF in README file!",
+			\@log );
+	}
 	print COVER $header . "\t" . "coveredBP\t" . "coveredExon\n";
 
 	while (<REFSEQ>) {
