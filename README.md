@@ -177,7 +177,8 @@ ExonDel needs a .gtf (refseq) file, a .bed file and a .fa file as reference file
 
 	#gtf file (with header):
 	#bin name chrom strand txStart txEnd cdsStart cdsEnd exonCount exonStarts exonEnds score name2 cdsStartStat cdsEndStat exonFrames
-
+    23      NM_005509       chr5    +       118407083       118584822       118407264       118582914       3      118407083,118433673,1184376292,      118407351,118433799,118437701,  0       DMXL1   cmpl    cmpl 0,0,0,
+    
 The .fa files could be downloaded at [UCSC website](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/). As UCSC does not provide the full .fa file, you may needed to download chromFa.tar.gz and combine the files in different chromosome into one .fa file, or download hg19.2bit and convert the 2bit file to .fa file by twoBitToFa.
 
 **After the .gtf (refseq) file, .bed file and .fa file were downloaded, you also need to modify the config file so that ExonDel can find them. See [config file](#cf) for more information.**
