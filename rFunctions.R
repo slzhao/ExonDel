@@ -134,7 +134,13 @@ for (winLength in minWinLength:maxWinLength) {
 			cutoff2<-quantile(exonAll[,x],minQuantile2,na.rm=T) #the max count exon should be more than cutoff2 
 		}
 		temp1<-split(exonAll[,x],exonAll[,5])
-		temp1<-temp1[which(sapply(temp1,length)>=minExonNum)]
+		temp3<-which(sapply(temp1,length)>=minExonNum)
+		if (length(temp3)==0) {
+			stopText<-paste0("No gene has more than ",minExonNum," exons. Try to decrease minExonNum in configure file to allow more genes in exon deletion detection.")
+			stop(stopText)
+		} else {
+			temp1<-temp1[temp3]
+		}
 		temp2<-sapply(temp1,function(x) {c(sigNumber(x,cutoff1=cutoff1,cutoff2=cutoff2,winLen=winLength),names(x))})
 		results<-cbind(results,as.numeric(temp2[1,]))
 		resultsDetailList<-cbind(resultsDetailList,temp2[2,])
@@ -181,13 +187,15 @@ for (winLength in minWinLength:maxWinLength) {
 		dev.off()
 		colnames(resultsExport)<-c("gene","transcript","chr","exonsStart","exonsEnd","sample","exonsDepth","exonDeletions","exonDeletionsStart","exonDeletionsEnd")
 		fileExport1<-paste(resultDir,'/exonDelsBy',winLength,'.csv',sep="")
-		fileExport2<-paste(resultDir,'/exonDelsCutoffs.csv',sep="")
 		write.csv(resultsExport,fileExport1,row.names=F)
-		resultsCutoffs<-cbind(cutoff=row.names(resultsCutoffs),resultsCutoffs)
-		write.csv(resultsCutoffs,fileExport2,row.names=F)
+		#resultsCutoffs<-cbind(cutoff=row.names(resultsCutoffs),resultsCutoffs)
+		#write.csv(resultsCutoffs,fileExport2,row.names=F)
 	} else {
-		print(paste0("Can't find any exon deletions with",winLength, "windows length\n"))
+		print(paste0("Can't find any exon deletions with ",winLength, " windows length\n"))
 	}
+	fileExport2<-paste(resultDir,'/exonDelsCutoffs.csv',sep="")
+	resultsCutoffs<-cbind(cutoff=row.names(resultsCutoffs),resultsCutoffs)
+	write.csv(resultsCutoffs,fileExport2,row.names=F)
 }
 
 

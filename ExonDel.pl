@@ -12,7 +12,7 @@ use lib $FindBin::Bin;
 use HTML::Template;
 use Report::Generate;
 
-my $version = "1.05";
+my $version = "1.06";
 
 my %config;
 my $current : shared;
@@ -198,6 +198,20 @@ else {
 	&generateNewRefseq( \%config, \%bedDatabase, \%resultHash );
 	pInfo( "Finish RefSeq file", \@log );
 }
+#make sure genesPassQC.bed was generated correctly
+if (! -s("$resultDir/genesPassQC.bed")) {
+	pInfo( "#####################################################################",
+			\@log );
+	pInfo( "#ERROR: genesPassQC.bed file was not generated correctly.",
+			\@log );
+	pInfo( "#Decrease exon_bp_cover_threshold and overall_exon_count_threshold in configure file.",
+			\@log );
+	pInfo( "#More information at README config file section.",
+			\@log );
+	pInfo( "#####################################################################",
+			\@log );
+	die("ERROR: genesPassQC.bed file was not generated correctly.");
+}
 
 ########################
 # 3. process fasta to caculate GC
@@ -262,11 +276,18 @@ else {
 	$genelist = "F";
 }
 my $rResult = system(
-"cat $Rsource | $RBin --vanilla --slave --args $resultDir $configFile $genelist 1>$resultDir/ExonDel.rLog 2>$resultDir/ExonDel.rLog"
+"cat $Rsource | $RBin --vanilla --slave --args $resultDir $configFile $genelist 1>$resultDir/ExonDel.rLog 2>>$resultDir/ExonDel.rLog"
 );
 if ( $rResult != 0 ) {
 	pInfo( "Something wrong in running R. Please check the ExonDel.rLog file!",
 		\@log );
+	pInfo( "ExonDel.rLog content:",
+		\@log );
+	open(INFILE, "$resultDir/ExonDel.rLog") or die "Cannot open ExonDel.rLog: $!.\n";
+	while(my $l = <INFILE>) {
+		print $l;
+	}
+	close INFILE;
 }
 
 ########################
@@ -392,7 +413,11 @@ sub generateNewRefseq {
 	my $header = <REFSEQ>;
 	chomp $header;
 	if ($header!~/^#bin	name	chrom	strand	txStart	txEnd	cdsStart	cdsEnd	exonCount	exonStarts	exonEnds/) {
-		pInfo( "###WARNING###The format in GTF file may not be supported. Please check the descriptions for GTF in README file!",
+		pInfo( "#####################################################################",
+			\@log );
+		pInfo( "#WARNING: The format in GTF file may not be supported. Please check the descriptions for GTF in README file!",
+			\@log );
+		pInfo( "#####################################################################",
 			\@log );
 	}
 	print COVER $header . "\t" . "coveredBP\t" . "coveredExon\n";

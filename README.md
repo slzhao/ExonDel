@@ -3,6 +3,7 @@ Table of Content
  * [Introduction](#Introduction)
  * [Download](#download)
  * [Change log](#Change)
+  * [Version 1.06](#V106)
   * [Version 1.05](#V105)
   * [Version 1.04](#V104)
   * [Version 1.03](#V103)
@@ -53,6 +54,11 @@ Or you could also download the zip file of ExonDel from [github](https://github.
 
 <a name="Change"/>
 # Change log #
+
+<a name="V106">
+## Version 1.06 on June 24, 2015
+Version 1.06
+ * More message and document were added for the configure file;
 
 <a name="V105">
 ## Version 1.05 on May 30, 2015
@@ -235,6 +241,17 @@ if these files were example.bed, example.gtf, hg19.fa and located in /reference/
     refseq=/reference/example.gtf
     #reference .fa file
     reffa=/reference/hg19.fa
+
+**The user need to take care of the following lines in ExonDel.cfg to make sure they can get a reliable result.**
+
+    #Minimal percent of covered base pairs for each exon
+    exon_bp_cover_threshold=0.1
+    #Minimal percent of covered exons for each gene. 1 means 100%
+    overall_exon_count_threshold=1
+
+exon_bp_cover_threshold=0.1 means a exon will be considered in exon deletion detection only when it was covered by at least 10% base pairs in the bed file;
+overall_exon_count_threshold=1 means a gene will be considered in exon deletion detection only when 100% of its exons passed the above exon_bp_cover_threshold;
+If these parameters were set too high, then no gene can pass and may cause error.
 
 <a name="Example"/>
 # Example #
