@@ -12,7 +12,7 @@ use lib $FindBin::Bin;
 use HTML::Template;
 use Report::Generate;
 
-my $version = "1.06";
+my $version = "1.07";
 
 my %config;
 my $current : shared;
@@ -156,6 +156,10 @@ if ( defined $genelist and ( -s $genelist ) ) {
 	pInfo( "Only the genes in $genelist will be used", \@log );
 	pInfo(
 "GC adjustment will not be performed, and the constant cutoffs in config file will be used",
+		\@log
+	);
+	pInfo(
+"If your bed file has fourth column, it should be gene name and can be matched to genes in $genelist",
 		\@log
 	);
 }
@@ -357,6 +361,7 @@ sub processFasta {
 			#do some thing here
 			if ( $chr ne "" ) {
 				$chr =~ s/chr//;
+				$chr = ( split / /, $chr )[0];
 				&caculateGC( $chr, $sequence, $resultHashRef );
 			}
 
@@ -372,6 +377,7 @@ sub processFasta {
 
 	#do some thing again for last sequence here
 	$chr =~ s/chr//;
+	$chr = ( split / /, $chr )[0];
 	&caculateGC( $chr, $sequence, $resultHashRef );
 
 	#end do something
@@ -432,7 +438,8 @@ sub generateNewRefseq {
 			next;
 		}
 		my $gene = $tokens[12];
-		if ( %genes and !( exists $genes{$gene} ) ) {
+		my $gene1 = $tokens[1];
+		if ( %genes and !( exists $genes{$gene} ) and !( exists $genes{$gene1} ) ) {
 			next;
 		}
 		my $TID       = $tokens[1];

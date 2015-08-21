@@ -3,6 +3,7 @@ Table of Content
  * [Introduction](#Introduction)
  * [Download](#download)
  * [Change log](#Change)
+  * [Version 1.07](#V107)
   * [Version 1.06](#V106)
   * [Version 1.05](#V105)
   * [Version 1.04](#V104)
@@ -54,6 +55,13 @@ Or you could also download the zip file of ExonDel from [github](https://github.
 
 <a name="Change"/>
 # Change log #
+
+<a name="V107">
+## Version 1.07 on August 21, 2015
+Version 1.07
+ * More robust for different format of .fa file;
+ * More message was added;
+ * More robust when only some genes were used for exon deletion detection;
 
 <a name="V106">
 ## Version 1.06 on June 24, 2015
